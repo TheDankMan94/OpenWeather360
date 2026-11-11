@@ -1,0 +1,7 @@
+bundled-music/*
+!bundled-music/README.txt
+build/
+__pycache__/
+*.pyc
+*.mp3
+*.deb

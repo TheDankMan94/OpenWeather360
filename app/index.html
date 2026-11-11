@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenWeather360</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="css/weatherscan.css">
+  <link rel="stylesheet" href="css/looks.css">
+</head>
+<body>
+  <!-- Shared gradients for the weather icons -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <radialGradient id="g-sun" cx="40%" cy="38%" r="65%">
+        <stop offset="0" stop-color="#fffbd0"/><stop offset=".35" stop-color="#ffe14a"/>
+        <stop offset=".8" stop-color="#ffb400"/><stop offset="1" stop-color="#f08a00"/>
+      </radialGradient>
+      <radialGradient id="g-sunglow" cx="50%" cy="50%" r="50%">
+        <stop offset=".55" stop-color="#ffe680" stop-opacity=".55"/><stop offset="1" stop-color="#ffd000" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="g-moonglow" cx="50%" cy="50%" r="50%">
+        <stop offset=".6" stop-color="#dfe8ff" stop-opacity=".35"/><stop offset="1" stop-color="#dfe8ff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="g-moon" cx="38%" cy="35%" r="70%">
+        <stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#d9dadc"/><stop offset="1" stop-color="#8d9096"/>
+      </radialGradient>
+      <linearGradient id="g-cloud" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="48">
+        <stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#eef2f7"/><stop offset="1" stop-color="#b4bfce"/>
+      </linearGradient>
+      <linearGradient id="g-cloud-back" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="48">
+        <stop offset="0" stop-color="#e4e9ef"/><stop offset="1" stop-color="#97a3b3"/>
+      </linearGradient>
+      <linearGradient id="g-cloud-dark" gradientUnits="userSpaceOnUse" x1="0" y1="6" x2="0" y2="48">
+        <stop offset="0" stop-color="#c0c7d1"/><stop offset=".55" stop-color="#8d97a5"/><stop offset="1" stop-color="#586271"/>
+      </linearGradient>
+      <linearGradient id="g-ray" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffd23a" stop-opacity=".95"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="f-b1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.1"/></filter>
+      <filter id="f-b3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+      <linearGradient id="g-rain" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9fd4ff"/><stop offset="1" stop-color="#1f7ae0"/>
+      </linearGradient>
+      <linearGradient id="g-bolt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff59a"/><stop offset="1" stop-color="#ffb000"/>
+      </linearGradient>
+      <linearGradient id="g-temp" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffcf3f"/><stop offset="1" stop-color="#ef5a10"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div id="viewport">
+    <div id="stage">
+      <div id="bg"><div class="arc arc-a"></div><div class="arc arc-b"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
+
+      <div id="look-art"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i><i class="a5"></i></div>
+      <div id="statusline"></div>
+      <div id="clock"><div class="date"></div><div class="time"></div><div class="alt-v1"></div><div class="alt-l1"></div><div class="alt-l2"></div></div>
+      <div id="badge"><b>open</b><span>WEATHER<br>360</span></div>
+      <div id="wordmark">OpenWeather360</div>
+
+      <div id="lbar">
+        <div id="lbar-loc"><span></span></div>
+        <div id="lbar-obs">
+          <div class="now">now</div>
+          <div class="temp">--</div>
+          <div class="icon"></div>
+          <div class="sub"></div>
+          <div class="alert" hidden></div>
+        </div>
+        <div id="lbar-radar-title">PAST 3 HOURS</div>
+        <div id="mini-radar"><div class="map"></div><div class="unavailable" hidden>radar unavailable</div></div>
+        <div id="provider"></div>
+      </div>
+
+      <div id="slide-frame">
+        <div id="header-scroller"><div class="track"></div></div>
+        <div id="slide-area" class="group-forecast">
+          <div id="slide-title"><span class="t"></span><span class="loc"></span><div class="corner"></div></div>
+          <div id="slide-body-wrap">
+            <div class="deco-tl"></div>
+            <div id="slide-body"></div>
+          </div>
+        </div>
+        <div id="slide-side"></div>
+      </div>
+
+      <div id="fbar">
+        <div class="head"><span class="loc"></span><em></em></div>
+        <div class="body"></div>
+      </div>
+
+      <div id="ticker"><div class="tab"><span>NOW</span></div><div class="track"></div></div>
+      <div id="crawl"><div class="label" hidden></div><div class="track"></div></div>
+
+      <div id="boot">
+        <div class="boot-title">OpenWeather360</div>
+        <div class="boot-sub">open</div>
+        <div class="boot-status">Locating...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/maplibre-gl.js"></script>
+  <script src="data/cities.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/maps.js"></script>
+  <script src="js/lbar.js"></script>
+  <script src="js/slides.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/panel.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

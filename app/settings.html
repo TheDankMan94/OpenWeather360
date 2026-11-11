@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenWeather360 Settings</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    @font-face { font-family: "WS Sans"; font-weight: 400; src: url(fonts/fira-sans-400.woff2) format("woff2"); }
+    @font-face { font-family: "WS Sans"; font-weight: 600; src: url(fonts/fira-sans-600.woff2) format("woff2"); }
+    @font-face { font-family: "WS Sans"; font-weight: 700; src: url(fonts/fira-sans-700.woff2) format("woff2"); }
+    :root { --bg: #0e1c5e; --card: #16287a; --line: #2c43a8; --text: #eef2ff; --muted: #a9b7e8; --accent: #ffd40e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: linear-gradient(180deg, #2a4fa8, var(--bg) 320px); color: var(--text); font: 16px/1.45 "WS Sans", "Ubuntu", sans-serif; min-height: 100vh; }
+    header { padding: 22px 16px 10px; max-width: 920px; margin: 0 auto; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+    header h1 { margin: 0; font-size: 30px; }
+    header span { color: var(--accent); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; font-size: 14px; }
+    main { max-width: 920px; margin: 0 auto; padding: 0 16px 120px; }
+    section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin: 16px 0; }
+    section h2 { margin: 0 0 12px; font-size: 19px; color: var(--accent); }
+    label { display: block; font-weight: 600; margin: 12px 0 4px; }
+    .hint { color: var(--muted); font-size: 14px; margin: 2px 0 0; }
+    input[type=text], input[type=number], select, textarea { width: 100%; padding: 9px 10px; border-radius: 6px; border: 1px solid var(--line); background: #0c1650; color: var(--text); font: inherit; }
+    textarea { min-height: 110px; resize: vertical; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .row > * { flex: 1 1 200px; }
+    .check { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 6px 0; }
+    .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 12px; }
+    button { font: inherit; font-weight: 600; border: 0; border-radius: 6px; padding: 9px 16px; cursor: pointer; background: #3156c9; color: #fff; }
+    button.primary { background: var(--accent); color: #111; }
+    button.ghost { background: transparent; border: 1px solid var(--line); color: var(--text); }
+    .results { list-style: none; margin: 8px 0 0; padding: 0; }
+    .results li { padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+    .results li:hover, .results li:focus { background: #23379a; outline: none; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; background: #23379a; padding: 5px 10px; border-radius: 999px; margin: 4px 6px 0 0; }
+    .chip button { padding: 0 6px; background: transparent; color: var(--muted); }
+    .current { margin-top: 8px; padding: 10px; border-radius: 6px; background: #0c1650; }
+    .bar { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(8, 14, 50, .95); border-top: 1px solid var(--line); padding: 12px 16px; }
+    .bar .in { max-width: 920px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .bar .msg { flex: 1; color: var(--muted); }
+    code { background: #0c1650; padding: 1px 5px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <header><h1>OpenWeather360</h1><span>Open · Settings</span></header>
+  <main>
+    <section>
+      <h2>Location</h2>
+      <label class="check"><input type="checkbox" id="locAuto"> Detect my location automatically (by internet address)</label>
+      <div id="locManual">
+        <label for="locSearch">Search for a city or ZIP/postal code</label>
+        <div class="row"><input type="text" id="locSearch" placeholder="e.g. Springfield, IL"><button id="locGo" style="flex:0 0 auto">Search</button></div>
+        <ul class="results" id="locResults"></ul>
+        <div class="current" id="locCurrent"></div>
+        <label for="locName">Display name</label>
+        <input type="text" id="locName" placeholder="Shown on screen">
+      </div>
+    </section>
+
+    <section>
+      <h2>Extra cities</h2>
+      <p class="hint">Each extra city gets its own "Your Local Forecast" segment. Leave empty to pick nearby towns automatically.</p>
+      <div id="extraList"></div>
+      <label for="extraSearch">Add a city</label>
+      <div class="row"><input type="text" id="extraSearch" placeholder="City name"><button id="extraGo" style="flex:0 0 auto">Search</button></div>
+      <ul class="results" id="extraResults"></ul>
+      <label for="autoExtra">Automatic extra cities (when the list is empty)</label>
+      <input type="number" id="autoExtra" min="0" max="5">
+    </section>
+
+    <section>
+      <h2>Programming</h2>
+      <p class="hint">Choose which segments run in the loop. Airport needs a US location; Boat &amp; Beach only appears near the coast.</p>
+      <div class="checks" id="packages"></div>
+      <label class="check"><input type="checkbox" id="severeMode"> Switch to the red severe-weather lineup during warnings</label>
+      <div class="row">
+        <div><label for="speed">Slide speed</label><select id="speed"><option value="0.75">Fast</option><option value="1">Normal</option><option value="1.3">Relaxed</option></select></div>
+        <div><label for="units">Units</label><select id="units"><option value="imperial">°F, mph, inches</option><option value="metric">°C, km/h, mm</option></select></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Branding</h2>
+      <div class="row">
+        <div><label for="provider">Cable provider name</label><input type="text" id="provider"></div>
+        <div><label for="wordmark">Channel wordmark</label><input type="text" id="wordmark"></div>
+        <div><label for="look">Look (also switchable on screen with P)</label><select id="look"><option value="v2">V2 - 2005 to 2022 (L-bar)</option><option value="v1">V1 - 2003 to 2005 (blue ellipse)</option><option value="local">Local - 2000 to 2003 (scenic, Up Next menu)</option></select></div>
+      </div>
+      <label for="logo">Provider logo image (optional URL or file in the app folder)</label>
+      <input type="text" id="logo" placeholder="https://... or images/mylogo.png">
+      <label for="crawl">Crawl messages (one per line)</label>
+      <textarea id="crawl"></textarea>
+    </section>
+
+    <section>
+      <h2>Radar</h2>
+      <div class="row">
+        <div><label for="miniZoom">Mini radar zoom</label><input type="number" id="miniZoom" step="0.1" min="3" max="10"></div>
+        <div><label for="mainZoom">Local radar zoom</label><input type="number" id="mainZoom" step="0.1" min="3" max="11"></div>
+        <div><label for="radarHours">Loop length (hours, US)</label><input type="number" id="radarHours" min="1" max="6"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Music</h2>
+      <label class="check"><input type="checkbox" id="musicOn"> Play background music</label>
+      <label for="musicSource">Music source</label>
+      <select id="musicSource"><option value="folder">My music folder (the included Weatherscan tracks)</option><option value="radio">Internet radio (optional)</option></select>
+      <div id="radioOpts">
+        <label for="station">Radio station</label>
+        <select id="station"></select>
+        <p class="hint">If a station is down, the next one plays automatically.</p>
+        <label for="customStream">Stream URL (optional, overrides the station)</label>
+        <input type="text" id="customStream" placeholder="https://.../stream.mp3">
+      </div>
+      <div id="folderOpts">
+        <label for="musicDir">Music folder</label>
+        <input type="text" id="musicDir" placeholder="~/Music/weatherscan">
+        <p class="hint" id="musicHint">Put your own MP3/OGG/FLAC files in this folder.</p>
+      </div>
+      <div class="row">
+        <div><label for="volume">Volume</label><input type="range" id="volume" min="0" max="1" step="0.05" style="width:100%"></div>
+        <div><label class="check" style="margin-top:34px"><input type="checkbox" id="shuffle"> Shuffle</label></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Keyboard</h2>
+      <p class="hint">On the weather screen: <code>S</code> settings · <code>F</code> fullscreen · <code>M</code> mute music · <code>C</code> show cursor · <code>Alt+F4</code> exit.</p>
+    </section>
+  </main>
+  <div class="bar"><div class="in"><span class="msg" id="msg"></span><button class="ghost" id="reset">Reset to defaults</button><button class="ghost" id="cancel">Back to weather</button><button class="primary" id="save">Save &amp; start</button></div></div>
+
+  <script src="js/util.js"></script>
+  <script src="js/config.js"></script>
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    const PKG = [["forecast", "Local forecast"], ["health", "Weather & your health"], ["extralocal", "Extra cities"], ["travel", "Travel forecast"], ["airport", "Airport conditions"], ["international", "International"], ["garden", "Garden"], ["golf", "Golf"], ["beach", "Boat & beach"], ["ski", "Ski & snow (in season)"]];
+    let cfg, loc, extras = [];
+
+    async function geocode(q) {
+      const zip = /^\d{5}$/.test(q.trim());
+      const url = `https://geocoding-api.open-meteo.com/v1/search?count=8&language=en&format=json&name=${encodeURIComponent(q.trim())}${zip ? "&countryCode=US" : ""}`;
+      const r = await WS.fetchJSON(url);
+      return (r.results || []).map((x) => ({ name: x.name, lat: x.latitude, lon: x.longitude, cc: x.country_code, label: [x.name, x.admin1, x.country].filter(Boolean).join(", ") }));
+    }
+    function showResults(list, el, pick) {
+      el.innerHTML = "";
+      if (!list.length) { el.innerHTML = "<li>No matches.</li>"; return; }
+      list.forEach((r) => {
+        const li = document.createElement("li");
+        li.tabIndex = 0;
+        li.textContent = `${r.label}  (${r.lat.toFixed(2)}, ${r.lon.toFixed(2)})`;
+        li.onclick = li.onkeydown = (e) => { if (e.type === "click" || e.key === "Enter") { pick(r); el.innerHTML = ""; } };
+        el.appendChild(li);
+      });
+    }
+    function search(input, out, pick) {
+      return async () => {
+        if (!$(input).value.trim()) return;
+        $(out).innerHTML = "<li>Searching...</li>";
+        try { showResults(await geocode($(input).value), $(out), pick); } catch (e) { $(out).innerHTML = "<li>Search failed - check your internet connection.</li>"; }
+      };
+    }
+    function renderLoc() {
+      $("locManual").style.opacity = $("locAuto").checked ? 0.5 : 1;
+      $("locCurrent").textContent = loc && loc.lat != null ? `Selected: ${loc.name || ""} (${(+loc.lat).toFixed(3)}, ${(+loc.lon).toFixed(3)})` : "No location chosen yet.";
+    }
+    function renderExtras() {
+      $("extraList").innerHTML = "";
+      extras.forEach((c, i) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = c.name;
+        const b = document.createElement("button");
+        b.textContent = "✕"; b.title = "Remove"; b.onclick = () => { extras.splice(i, 1); renderExtras(); };
+        chip.appendChild(b);
+        $("extraList").appendChild(chip);
+      });
+    }
+
+    function fill(c) {
+      cfg = c;
+      loc = Object.assign({}, c.location);
+      extras = (c.extraCities || []).slice();
+      $("locAuto").checked = !!c.location.auto;
+      $("locName").value = c.location.name || "";
+      $("autoExtra").value = c.autoExtraCities;
+      $("packages").innerHTML = PKG.map(([k, n]) => `<label class="check"><input type="checkbox" value="${k}" ${c.packages.includes(k) ? "checked" : ""}> ${n}</label>`).join("");
+      $("severeMode").checked = !!c.severeMode;
+      $("speed").value = String(c.durationScale);
+      if (!$("speed").value) $("speed").value = "1";
+      $("units").value = c.units;
+      $("provider").value = c.providerName;
+      $("wordmark").value = c.wordmark;
+      $("look").value = c.look || "v2";
+      $("logo").value = c.providerLogo || "";
+      $("crawl").value = (c.crawlMessages || []).join("\n");
+      $("miniZoom").value = c.radar.miniZoom;
+      $("mainZoom").value = c.radar.mainZoom;
+      $("radarHours").value = c.radar.hours;
+      $("musicOn").checked = !!c.music.enabled;
+      $("musicDir").value = c.music.dir || "";
+      $("musicSource").value = c.music.source || "folder";
+      $("station").innerHTML = WS.RADIO_STATIONS.map((st) => `<option value="${st.id}">${WS.esc(st.name)}</option>`).join("");
+      $("station").value = c.music.station || "smoothjazz";
+      $("customStream").value = c.music.customStream || "";
+      renderMusic();
+      $("volume").value = c.music.volume;
+      $("shuffle").checked = !!c.music.shuffle;
+      renderLoc(); renderExtras();
+    }
+
+    function renderMusic() {
+      const radio = $("musicSource").value === "radio";
+      $("radioOpts").style.display = radio ? "" : "none";
+      $("folderOpts").style.display = radio ? "none" : "";
+    }
+
+    function collect() {
+      const num = (id, d) => { const v = parseFloat($(id).value); return isNaN(v) ? d : v; };
+      const out = Object.assign({}, WS.userConfig || {});
+      out.location = { auto: $("locAuto").checked, name: $("locName").value.trim(), lat: loc.lat, lon: loc.lon, cc: loc.cc || "" };
+      out.extraCities = extras;
+      out.autoExtraCities = num("autoExtra", 2);
+      out.packages = [...$("packages").querySelectorAll("input:checked")].map((i) => i.value);
+      out.severeMode = $("severeMode").checked;
+      out.durationScale = num("speed", 1);
+      out.units = $("units").value;
+      out.providerName = $("provider").value.trim();
+      out.wordmark = $("wordmark").value.trim();
+      out.look = $("look").value;
+      out.providerLogo = $("logo").value.trim();
+      out.crawlMessages = $("crawl").value.split("\n").map((s) => s.trim()).filter(Boolean);
+      out.radar = Object.assign({}, out.radar, { miniZoom: num("miniZoom", 6.3), mainZoom: num("mainZoom", 7.3), hours: num("radarHours", 3) });
+      out.music = Object.assign({}, out.music, { enabled: $("musicOn").checked, source: $("musicSource").value, station: $("station").value, customStream: $("customStream").value.trim(), dir: $("musicDir").value.trim(), volume: num("volume", 0.6), shuffle: $("shuffle").checked });
+      return out;
+    }
+
+    async function save() {
+      const c = collect();
+      if (!c.location.auto && (c.location.lat == null || c.location.lon == null)) { $("msg").textContent = "Pick a location from the search results, or turn on automatic detection."; return; }
+      if (!c.packages.length) { $("msg").textContent = "Choose at least one segment."; return; }
+      $("msg").textContent = "Saving...";
+      try {
+        const r = await fetch("/api/config", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(c) });
+        if (!r.ok) throw new Error((await r.json()).error || r.status);
+        try { localStorage.removeItem("ws:autoloc"); } catch (e) { /* ignore */ }
+        location.href = "index.html";
+      } catch (e) {
+        $("msg").textContent = "Could not save: " + e.message;
+      }
+    }
+
+    $("musicSource").onchange = renderMusic;
+    $("locAuto").onchange = renderLoc;
+    $("locGo").onclick = search("locSearch", "locResults", (r) => { loc = r; $("locName").value = r.name; $("locAuto").checked = false; renderLoc(); });
+    $("locSearch").onkeydown = (e) => { if (e.key === "Enter") $("locGo").click(); };
+    $("extraGo").onclick = search("extraSearch", "extraResults", (r) => { extras.push({ name: r.name, lat: r.lat, lon: r.lon, cc: r.cc }); $("extraSearch").value = ""; renderExtras(); });
+    $("extraSearch").onkeydown = (e) => { if (e.key === "Enter") $("extraGo").click(); };
+    $("save").onclick = save;
+    $("cancel").onclick = () => (location.href = "index.html");
+    $("reset").onclick = () => { if (confirm("Reset all settings to defaults?")) { WS.userConfig = {}; fill(WS.mergeConfig(WS.DEFAULTS, {})); $("msg").textContent = "Defaults loaded - press Save to keep them."; } };
+
+    WS.loadConfig().then(fill);
+    fetch("/api/version").then((r) => r.json()).then((v) => { $("musicHint").textContent = `Put your own MP3/OGG/FLAC files in this folder (currently ${v.musicDir}). Settings file: ${v.configFile}`; }).catch(() => {});
+  })();
+  </script>
+</body>
+</html>

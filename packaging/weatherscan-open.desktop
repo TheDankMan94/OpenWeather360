@@ -1,0 +1,19 @@
+[Desktop Entry]
+Type=Application
+Name=OpenWeather360
+GenericName=Weather Channel Display
+Comment=Retro cable weather channel with live local forecasts and radar
+Exec=weatherscan-open
+Icon=weatherscan-open
+Terminal=false
+Categories=Utility;
+Keywords=weather;forecast;radar;openweather360;
+Actions=Fullscreen;Settings;
+
+[Desktop Action Fullscreen]
+Name=Open Fullscreen
+Exec=weatherscan-open --fullscreen
+
+[Desktop Action Settings]
+Name=Settings
+Exec=weatherscan-open --settings
