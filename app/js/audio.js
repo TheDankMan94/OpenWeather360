@@ -1,4 +1,4 @@
-/* Background music. Default: the Weatherscan tracks / your music folder on a random loop
+/* Background music. Default: the bundled tracks / your music folder on a random loop
  * (reshuffled every pass, never repeating the last track). Optional: internet radio from a
  * built-in station list or your own stream URL, with failover and automatic reconnect. */
 (function (WS) {

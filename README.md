@@ -16,7 +16,7 @@ The easiest way is to build the `.deb` package and install it:
 ```
 
 ```bash
-sudo apt install ./build/weatherscan-open_1.1.0_all.deb
+sudo apt install ./build/openweather360_1.2.0_all.deb
 ```
 
 You can also install just for your user, without `sudo`:
@@ -25,7 +25,7 @@ You can also install just for your user, without `sudo`:
 ./install.sh
 ```
 
-Then open **Menu → Accessories → OpenWeather360**, or run `weatherscan-open`.
+Then open **Menu → Accessories → OpenWeather360**, or run `openweather360`.
 It needs `python3`, which Mint already has, and a browser. Firefox ships with Mint;
 Chromium gives smoother maps:
 
@@ -33,7 +33,7 @@ Chromium gives smoother maps:
 sudo apt install chromium
 ```
 
-To remove it, use `sudo apt remove weatherscan-open`, or `./uninstall.sh` for the per-user install.
+To remove it, use `sudo apt remove openweather360`, or `./uninstall.sh` for the per-user install.
 
 ## Using it
 
@@ -41,10 +41,10 @@ To remove it, use `sudo apt remove weatherscan-open`, or `./uninstall.sh` for th
 - Press **S** for Settings (location search by city or ZIP, extra cities, segments, provider
   name, crawl messages, radar zoom, music). **F** toggles fullscreen, **M** mutes music,
   **C** shows the cursor, **Alt+F4** exits.
-- `weatherscan-open --fullscreen` starts in kiosk fullscreen, `--settings` opens settings,
+- `openweather360 --fullscreen` starts in kiosk fullscreen, `--settings` opens settings,
   `--server-only` serves it at http://127.0.0.1:8642 for any browser, and `--lan` lets
   other devices on your network (a TV or Raspberry Pi) open it.
-- Settings are stored in `~/.config/weatherscan-open/config.json`.
+- Settings are stored in `~/.config/openweather360/config.json`.
 
 ## Looks and the quick panel
 
@@ -121,7 +121,7 @@ are included. "Weatherscan" is a trademark of its owner, and this project is not
 Nothing is collected or sent to any server run by this project. With automatic location the app asks
 ip-api.com for your approximate location from your IP address (turn it off by choosing a location in
 Settings), and weather data is requested directly from the services listed above. Your settings stay in
-`~/.config/weatherscan-open/config.json` on your machine.
+`~/.config/openweather360/config.json` on your machine.
 
 ## Development
 

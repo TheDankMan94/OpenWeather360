@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """OpenWeather360 - local server and launcher.
 
-Serves the web app from ./app, stores settings in ~/.config/weatherscan-open,
+Serves the web app from ./app, stores settings in ~/.config/openweather360,
 and proxies the few free data feeds that do not allow browser (CORS) access.
 Uses only the Python standard library.
 """
@@ -20,13 +20,15 @@ import urllib.parse
 import urllib.request
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 APP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app")
-CONFIG_DIR = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config"), "weatherscan-open")
+CONFIG_BASE = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+CONFIG_DIR = os.path.join(CONFIG_BASE, "openweather360")
+OLD_CONFIG_DIR = os.path.join(CONFIG_BASE, "weatherscan-open")  # name used before 1.2.0
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.json")
 DEFAULT_MUSIC_DIR = os.path.expanduser("~/Music/weatherscan")
 BUNDLED_MUSIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "music")  # music shipped with a personal build
-USER_AGENT = "weatherscan-open/%s (local weather display; https://github.com/)" % VERSION
+USER_AGENT = "openweather360/%s (local weather display; https://github.com/)" % VERSION
 
 # Hosts the browser may reach through /api/proxy. Everything else is refused.
 PROXY_HOSTS = {
@@ -58,6 +60,15 @@ def save_config(data):
     with open(tmp, "w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2)
     os.replace(tmp, CONFIG_FILE)
+
+
+def migrate_config():
+    """Settings used to live in ~/.config/weatherscan-open; keep them when the app is renamed."""
+    if not os.path.exists(CONFIG_DIR) and os.path.isdir(OLD_CONFIG_DIR):
+        try:
+            os.rename(OLD_CONFIG_DIR, CONFIG_DIR)
+        except OSError:
+            pass
 
 
 def music_dir():
@@ -273,6 +284,7 @@ def main():
     ap.add_argument("--version", action="version", version=VERSION)
     args = ap.parse_args()
 
+    migrate_config()
     os.makedirs(CONFIG_DIR, exist_ok=True)
     port = free_port(args.port)
     host = "0.0.0.0" if args.lan else "127.0.0.1"

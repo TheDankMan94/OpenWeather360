@@ -3,7 +3,7 @@
 set -e
 SRC=$(cd "$(dirname "$0")" && pwd)
 VERSION=$(python3 -c "import re;print(re.search(r'VERSION = \"([^\"]+)\"', open('$SRC/weatherscan.py').read()).group(1))")
-PKG="weatherscan-open_${VERSION}_all"
+PKG="openweather360_${VERSION}_all"
 BUILD="$SRC/build/$PKG"
 rm -rf "$BUILD"
 mkdir -p "$BUILD/DEBIAN"
@@ -12,19 +12,24 @@ rm -rf "$SRC/build/fakehome"
 # caches are generated on the target system by postinst; never ship them
 rm -f "$BUILD/usr/share/applications/mimeinfo.cache" "$BUILD/usr/share/icons/hicolor/icon-theme.cache"
 # the launcher must point at the final install location, not the build tree
-cat > "$BUILD/usr/bin/weatherscan-open" <<'LAUNCH'
+cat > "$BUILD/usr/bin/openweather360" <<'LAUNCH'
 #!/bin/sh
-exec python3 /usr/share/weatherscan-open/weatherscan.py "$@"
+exec python3 /usr/share/openweather360/weatherscan.py "$@"
 LAUNCH
-chmod 755 "$BUILD/usr/bin/weatherscan-open"
+chmod 755 "$BUILD/usr/bin/openweather360"
+rm -f "$BUILD/usr/bin/weatherscan-open"
+ln -s openweather360 "$BUILD/usr/bin/weatherscan-open"
 SIZE=$(du -sk "$BUILD/usr" | cut -f1)
 cat > "$BUILD/DEBIAN/control" <<CONTROL
-Package: weatherscan-open
+Package: openweather360
 Version: $VERSION
 Section: misc
 Priority: optional
 Architecture: all
 Depends: python3 (>= 3.8)
+Replaces: weatherscan-open
+Conflicts: weatherscan-open
+Provides: weatherscan-open
 Recommends: chromium | google-chrome-stable | firefox
 Installed-Size: $SIZE
 Maintainer: OpenWeather360 <noreply@localhost>
@@ -45,7 +50,7 @@ POST
 chmod 755 "$BUILD/DEBIAN/postinst"
 find "$BUILD/usr" -type d -exec chmod 755 {} +
 find "$BUILD/usr/share" -type f -exec chmod 644 {} +
-chmod 755 "$BUILD/usr/share/weatherscan-open/weatherscan.py"
+chmod 755 "$BUILD/usr/share/openweather360/weatherscan.py"
 dpkg-deb -Zgzip -z1 --root-owner-group --build "$BUILD" "$SRC/build/$PKG.deb" >/dev/null
 echo "Built $SRC/build/$PKG.deb"
 echo "Install with: sudo apt install ./build/$PKG.deb"
