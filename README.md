@@ -1,7 +1,10 @@
 # OpenWeather360
 
-A fullscreen, retro cable weather channel for Linux, modelled on the layout of the
-2000s "Weatherscan" service as recreated by [weatherscan-v2](https://github.com/MistWeatherMedia/weatherscan-v2).
+A retro cable weather channel for Linux, modelled on the look and slide lineup of the 2000s-era
+"Weatherscan" cable service, as described in public information such as the
+[TWC Archive wiki](https://www.twcarchive.com/wiki/Weatherscan). Other fan recreations of the channel
+were only used as a visual reference, not as a source: no code, images or audio from them or from the
+original service are included, and everything here was written from scratch.
 Everything here is free and open source, and **no API keys are needed**.
 
 ## Install on Linux Mint
