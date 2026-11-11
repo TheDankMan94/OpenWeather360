@@ -5,7 +5,7 @@
     extraCities: [],            // [{name, lat, lon}] shown as extra "Your Local Forecast" segments
     autoExtraCities: 2,         // when extraCities is empty, pick this many nearby towns automatically
     units: "imperial",          // imperial | metric
-    providerName: "Open Digital Cable",
+    providerName: "Open Weather 360 Group",
     providerLogo: "",           // optional image URL (e.g. file in app/ or http URL)
     wordmark: "OpenWeather360",
     look: "v2",                 // v2 | v1 | local  (see WS.LOOKS)
