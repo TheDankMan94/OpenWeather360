@@ -20,7 +20,7 @@ import urllib.parse
 import urllib.request
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 APP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app")
 CONFIG_DIR = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config"), "weatherscan-open")
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.json")

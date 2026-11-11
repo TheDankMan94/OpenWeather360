@@ -16,7 +16,7 @@ The easiest way is to build the `.deb` package and install it:
 ```
 
 ```bash
-sudo apt install ./build/weatherscan-open_1.0.0_all.deb
+sudo apt install ./build/weatherscan-open_1.1.0_all.deb
 ```
 
 You can also install just for your user, without `sudo`:
