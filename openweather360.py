@@ -20,7 +20,7 @@ import urllib.parse
 import urllib.request
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 APP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app")
 CONFIG_BASE = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
 CONFIG_DIR = os.path.join(CONFIG_BASE, "openweather360")
@@ -109,13 +109,13 @@ def fetch_remote(url):
 
 
 class Handler(SimpleHTTPRequestHandler):
-    server_version = "WeatherscanOpen/" + VERSION
+    server_version = "OpenWeather360/" + VERSION
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=APP_DIR, **kwargs)
 
     def log_message(self, fmt, *args):
-        if os.environ.get("WEATHERSCAN_DEBUG"):
+        if os.environ.get("OPENWEATHER360_DEBUG") or os.environ.get("WEATHERSCAN_DEBUG"):
             super().log_message(fmt, *args)
 
     def end_headers(self):
@@ -274,7 +274,7 @@ def launch_browser(url, preference, fullscreen):
 
 def main():
     ap = argparse.ArgumentParser(description="OpenWeather360 - retro cable weather channel display")
-    ap.add_argument("--port", type=int, default=int(os.environ.get("WEATHERSCAN_PORT", 8642)))
+    ap.add_argument("--port", type=int, default=int(os.environ.get("OPENWEATHER360_PORT") or os.environ.get("WEATHERSCAN_PORT", 8642)))
     ap.add_argument("--server-only", action="store_true", help="only run the web server")
     ap.add_argument("--fullscreen", action="store_true", help="start in fullscreen kiosk mode (default is a normal resizable window; F toggles fullscreen)")
     ap.add_argument("--windowed", action="store_true", help="normal window (this is now the default)")

@@ -12,7 +12,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TMP = tempfile.mkdtemp(prefix="wsopen-test-")
 os.environ["XDG_CONFIG_HOME"] = os.path.join(TMP, "config")
 sys.path.insert(0, ROOT)
-import weatherscan  # noqa: E402  (must import after XDG_CONFIG_HOME is set)
+import openweather360  # noqa: E402  (must import after XDG_CONFIG_HOME is set)
 
 
 def get(url, headers=None):
@@ -33,8 +33,8 @@ class ServerTest(unittest.TestCase):
             fh.write(bytes(range(256)) * 4)
         with open(os.path.join(TMP, "secret.mp3"), "wb") as fh:
             fh.write(b"outside")
-        weatherscan.save_config({"music": {"dir": cls.music}})
-        cls.httpd = weatherscan.ThreadingHTTPServer(("127.0.0.1", 0), weatherscan.Handler)
+        openweather360.save_config({"music": {"dir": cls.music}})
+        cls.httpd = openweather360.ThreadingHTTPServer(("127.0.0.1", 0), openweather360.Handler)
         cls.base = "http://127.0.0.1:%d" % cls.httpd.server_address[1]
         threading.Thread(target=cls.httpd.serve_forever, daemon=True).start()
 

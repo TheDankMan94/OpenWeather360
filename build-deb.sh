@@ -2,7 +2,7 @@
 # Build a .deb package for Linux Mint / Ubuntu / Debian: ./build-deb.sh
 set -e
 SRC=$(cd "$(dirname "$0")" && pwd)
-VERSION=$(python3 -c "import re;print(re.search(r'VERSION = \"([^\"]+)\"', open('$SRC/weatherscan.py').read()).group(1))")
+VERSION=$(python3 -c "import re;print(re.search(r'VERSION = \"([^\"]+)\"', open('$SRC/openweather360.py').read()).group(1))")
 PKG="openweather360_${VERSION}_all"
 BUILD="$SRC/build/$PKG"
 rm -rf "$BUILD"
@@ -14,7 +14,7 @@ rm -f "$BUILD/usr/share/applications/mimeinfo.cache" "$BUILD/usr/share/icons/hic
 # the launcher must point at the final install location, not the build tree
 cat > "$BUILD/usr/bin/openweather360" <<'LAUNCH'
 #!/bin/sh
-exec python3 /usr/share/openweather360/weatherscan.py "$@"
+exec python3 /usr/share/openweather360/openweather360.py "$@"
 LAUNCH
 chmod 755 "$BUILD/usr/bin/openweather360"
 rm -f "$BUILD/usr/bin/weatherscan-open"
@@ -50,7 +50,7 @@ POST
 chmod 755 "$BUILD/DEBIAN/postinst"
 find "$BUILD/usr" -type d -exec chmod 755 {} +
 find "$BUILD/usr/share" -type f -exec chmod 644 {} +
-chmod 755 "$BUILD/usr/share/openweather360/weatherscan.py"
+chmod 755 "$BUILD/usr/share/openweather360/openweather360.py"
 dpkg-deb -Zgzip -z1 --root-owner-group --build "$BUILD" "$SRC/build/$PKG.deb" >/dev/null
 echo "Built $SRC/build/$PKG.deb"
 echo "Install with: sudo apt install ./build/$PKG.deb"

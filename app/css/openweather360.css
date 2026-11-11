@@ -1,4 +1,4 @@
-/* Weatherscan Open - layout is a fixed 1620x1080 stage scaled to the window. */
+/* OpenWeather360 - layout is a fixed 1620x1080 stage scaled to the window. */
 
 @font-face { font-family: "WS Sans"; font-weight: 400; src: url(../fonts/fira-sans-400.woff2) format("woff2"); }
 @font-face { font-family: "WS Sans"; font-weight: 500; src: url(../fonts/fira-sans-500.woff2) format("woff2"); }

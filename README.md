@@ -16,7 +16,7 @@ The easiest way is to build the `.deb` package and install it:
 ```
 
 ```bash
-sudo apt install ./build/openweather360_1.2.0_all.deb
+sudo apt install ./build/openweather360_1.2.1_all.deb
 ```
 
 You can also install just for your user, without `sudo`:
@@ -126,7 +126,7 @@ Settings), and weather data is requested directly from the services listed above
 ## Development
 
 ```bash
-python3 weatherscan.py --server-only
+python3 openweather360.py --server-only
 ```
 
 ```bash

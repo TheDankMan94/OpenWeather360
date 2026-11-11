@@ -20,7 +20,7 @@ fi
 mkdir -p "$SHARE" "$BIN" "$PREFIX/share/applications" "$PREFIX/share/icons/hicolor/scalable/apps"
 rm -rf "$SHARE/app"
 cp -r "$SRC/app" "$SHARE/app"
-install -m 755 "$SRC/weatherscan.py" "$SHARE/weatherscan.py"
+install -m 755 "$SRC/openweather360.py" "$SHARE/openweather360.py"
 cp "$SRC/README.md" "$SRC/LICENSE" "$SHARE/" 2>/dev/null || true
 # personal builds can ship music: put audio files in ./bundled-music before installing
 rm -rf "$SHARE/music"
@@ -30,7 +30,7 @@ rm -rf "$PREFIX/share/weatherscan-open"
 rm -f "$PREFIX/share/applications/weatherscan-open.desktop" "$PREFIX/share/icons/hicolor/scalable/apps/weatherscan-open.svg" "$BIN/weatherscan-open"
 cat > "$BIN/openweather360" <<LAUNCH
 #!/bin/sh
-exec python3 "$SHARE/weatherscan.py" "\$@"
+exec python3 "$SHARE/openweather360.py" "\$@"
 LAUNCH
 chmod 755 "$BIN/openweather360"
 ln -s openweather360 "$BIN/weatherscan-open"   # old command name keeps working
